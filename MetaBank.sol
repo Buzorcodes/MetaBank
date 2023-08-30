@@ -1,37 +1,33 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-contract MetaToken {
+contract MetaBank {
     address public  owner;
-    string public name;
-    string public symbol;
-    uint8 public decimals;
-    uint256 public totalSupply;
-    mapping(address => uint256) public balances;
+    uint public bankBalance;
+   
+    mapping(address => uint256) public balanceOf;
 
     constructor() {
         owner = msg.sender;
-        name = "Meta Token";
-        symbol = "MTT";
-        decimals = 18;
+      }
 
+    function mintToken( uint256 _value) public {
+        require(msg.sender == owner, "Only owner can call this function");
+        balanceOf[msg.sender] += _value;
+        bankBalance += _value;
     }
 
-    function transfer(address _to, uint256 _amount) public {
-        require(balances[msg.sender] >= _amount, "Insufficient fund");
-        balances[msg.sender] -= _amount;
-        balances[_to] += _amount;
+    function transferToken(address _receiver, uint256 _value) public {
+        require(balanceOf[msg.sender] >= _value, "low balance");
+        balanceOf[msg.sender] -= _value;
+        balanceOf[_receiver] += _value;
     }
 
-    function burn(uint256 _amount) public {
-        require(balances[msg.sender] >= _amount, "Insufficient fund");
-        balances[msg.sender] -= _amount;
-        totalSupply -= _amount;
+    function burnToken(uint256 _value) public {
+        require(balanceOf[msg.sender] >= _value, "low balance");
+        balanceOf[msg.sender] -= _value;
+        bankBalance -= _value;
     }
 
-    function mint( uint256 _amount) public {
-        require(msg.sender == owner, "Only owner");
-        balances[msg.sender] += _amount;
-        totalSupply += _amount;
-    }
+
 }
